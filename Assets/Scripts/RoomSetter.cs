@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 
 public class RoomSetter : MonoBehaviour
 {
-    public enum Mode { SetFloor, SetRotation }
+    public enum Mode { SetFloor, SetRotation, SetOffsetX, SetOffsetZ, TrackHeadPos }
 
     [SerializeField]
     private OVRInput.Controller m_controller = OVRInput.Controller.None;
@@ -13,6 +15,13 @@ public class RoomSetter : MonoBehaviour
 
     [SerializeField]
     private Transform roomFloor;
+    [SerializeField]
+    private Transform head;
+
+    [SerializeField]
+    private float movementSensitivity;
+    [SerializeField]
+    private float rotationSensitivity;
 
     private Mode currentMode = Mode.SetFloor;
     private int modesCount;
@@ -20,15 +29,19 @@ public class RoomSetter : MonoBehaviour
     private Transform firstDot;
     private Transform secondDot;
 
+    private bool trackingIsStarted = false;
+
+    //private Coroutine trackingCoroutine;
+
     private void Start()
     {
-        modesCount = System.Enum.GetValues(typeof(Mode)).Length;
+        modesCount = Enum.GetValues(typeof(Mode)).Length;
         messenger.ShowMessage("Установка пола");
     }
 
     private void Update()
     {
-        PrintDot();
+        Tune();
         ChangeMode();
     }
 
@@ -48,11 +61,20 @@ public class RoomSetter : MonoBehaviour
                 case Mode.SetRotation:
                     messenger.ShowMessage("Поворот комнаты");
                     break;
+                case Mode.SetOffsetX:
+                    messenger.ShowMessage("Смещение комнаты по X");
+                    break;
+                case Mode.SetOffsetZ:
+                    messenger.ShowMessage("Смещение комнаты по Z");
+                    break;
+                case Mode.TrackHeadPos:
+                    messenger.ShowMessage("Отслеживание головы");
+                    break;
             }
         }
     }
 
-    private void PrintDot()
+    private void Tune()
     {
         if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, m_controller))
         {
@@ -62,12 +84,128 @@ public class RoomSetter : MonoBehaviour
                     roomFloor.position = new Vector3(roomFloor.position.x, transform.position.y, roomFloor.position.z);
                     break;
                 case Mode.SetRotation:
-                    firstDot = Instantiate(dotPrefab, transform.position, transform.rotation).transform;
-                    RotateRoom(-firstDot.rotation.eulerAngles.y);
-                    Destroy(firstDot.gameObject, 3f);
+                    if (firstDot == null)
+                    {
+                        firstDot = Instantiate(dotPrefab, transform.position, transform.rotation).transform;
+                        messenger.SetMessageColor(Color.yellow);
+                    }
+                    else
+                    {
+                        secondDot = Instantiate(dotPrefab, transform.position, Quaternion.identity).transform;
+
+                        var A = new Vector2(firstDot.position.x, firstDot.position.z);
+                        var B = new Vector2(secondDot.position.x, secondDot.position.z);
+
+                        //var C = new Vector2(firstDot.position.x, secondDot.position.z);
+                        var C = new Vector2(secondDot.position.x, firstDot.position.z);
+
+                        var a = C - A;
+                        var b = B - A;
+
+                        var multi = a.x * b.x + a.y * b.y;
+
+                        var cos = multi / (a.magnitude * b.magnitude);
+
+                        var acos = Mathf.Acos(cos);
+                        var ang = (180.0f / Mathf.PI) * acos;
+
+                        //RotateRoom(ang + 90.0f);
+                        RotateRoom(ang);
+                        messenger.SetMessageColor(messenger.GetDefaultColor());
+                        Destroy(firstDot.gameObject, 3f);
+                        Destroy(secondDot.gameObject, 3f);
+                    }
+                    break;
+                case Mode.TrackHeadPos:
+                    if (!trackingIsStarted)
+                    {
+                        messenger.SetMessageColor(Color.yellow);
+                        trackingIsStarted = true;
+                    }
+                    else
+                    {
+                        messenger.SetMessageColor(messenger.GetDefaultColor());
+                        trackingIsStarted = false;
+                    }
                     break;
             }
         }
+        if (OVRInput.GetDown(OVRInput.Button.One, m_controller))
+        {
+            messenger.SetMessageColor(Color.yellow);
+        }
+        if (OVRInput.Get(OVRInput.Button.One, m_controller))
+        {
+            switch (currentMode)
+            {
+                case Mode.SetOffsetX:
+                    roomFloor.Translate(Vector3.right * Time.deltaTime * movementSensitivity, Space.World);
+                    break;
+                case Mode.SetOffsetZ:
+                    roomFloor.Translate(Vector3.forward * Time.deltaTime * movementSensitivity, Space.World);
+                    break;
+            }
+        }
+        if (OVRInput.GetUp(OVRInput.Button.One, m_controller))
+        {
+            messenger.SetMessageColor(messenger.GetDefaultColor());
+        }
+        if (OVRInput.GetDown(OVRInput.Button.Two, m_controller))
+        {
+            messenger.SetMessageColor(Color.yellow);
+        }
+        if (OVRInput.Get(OVRInput.Button.Two, m_controller))
+        {
+            switch (currentMode)
+            {
+                case Mode.SetOffsetX:
+                    roomFloor.Translate(Vector3.left * Time.deltaTime * movementSensitivity, Space.World);
+                    break;
+                case Mode.SetOffsetZ:
+                    roomFloor.Translate(Vector3.back * Time.deltaTime * movementSensitivity, Space.World);
+                    break;
+            }
+        }
+        if (OVRInput.GetUp(OVRInput.Button.Two, m_controller))
+        {
+            messenger.SetMessageColor(messenger.GetDefaultColor());
+        }
+        if (trackingIsStarted)
+        {
+            if ((int)Time.time % 2 == 0)
+            {
+                Instantiate(dotPrefab, head.position, Quaternion.identity);
+            }
+        }
+        //if (OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x != 0f && currentMode == Mode.SetOffsetX)
+        //{
+        //    roomFloor.Translate(Vector3.forward * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x * Time.deltaTime * movementSensitivity);
+        //}
+        //if (OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y != 0f)
+        //{
+        //    switch (currentMode)
+        //    {
+        //        case Mode.SetOffset:
+        //            roomFloor.Translate(Vector3.right * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y * Time.deltaTime * movementSensitivity);
+        //            break;
+        //        case Mode.SetRotation:
+        //            roomFloor.Rotate(Vector3.up * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y * Time.deltaTime * rotationSensitivity);
+        //            break;
+        //    }
+        //}
+    }
+
+    //private IEnumerator SetHeadPosition()
+    //{
+    //    Instantiate(dotPrefab, head.position, Quaternion.identity);
+    //    yield return new WaitForSeconds(2f);
+    //}
+
+    private void SetRoomRotationWithController()
+    {
+        firstDot = Instantiate(dotPrefab, transform.position, transform.rotation).transform;
+        RotateRoom(firstDot.rotation.eulerAngles.y);
+        Destroy(firstDot.gameObject, 3f);
     }
 
     private void SetRoomRotation()
