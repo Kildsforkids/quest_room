@@ -1825,6 +1825,7 @@ MonoBehaviour:
   head: {fileID: 7805413458638632325}
   movementSensitivity: 0.1
   rotationSensitivity: 1
+  trackRate: 0.5
 --- !u!114 &103536630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6072,6 +6073,7 @@ MonoBehaviour:
   head: {fileID: 0}
   movementSensitivity: 0.1
   rotationSensitivity: 1
+  trackRate: 0
 --- !u!114 &919871924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22156,6 +22158,7 @@ MonoBehaviour:
   head: {fileID: 0}
   movementSensitivity: 0.1
   rotationSensitivity: 1
+  trackRate: 0
 --- !u!1 &5016715841054830353
 GameObject:
   m_ObjectHideFlags: 0
@@ -24960,6 +24963,7 @@ MonoBehaviour:
   head: {fileID: 0}
   movementSensitivity: 1
   rotationSensitivity: 0
+  trackRate: 0
 --- !u!1 &7893563122812921740
 GameObject:
   m_ObjectHideFlags: 0

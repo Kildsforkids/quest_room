@@ -23,6 +23,9 @@ public class RoomSetter : MonoBehaviour
     [SerializeField]
     private float rotationSensitivity;
 
+    [SerializeField]
+    private float trackRate;
+
     private Mode currentMode = Mode.SetFloor;
     private int modesCount;
 
@@ -30,6 +33,8 @@ public class RoomSetter : MonoBehaviour
     private Transform secondDot;
 
     private bool trackingIsStarted = false;
+
+    private float nextTimeToTrack = 0f;
 
     //private Coroutine trackingCoroutine;
 
@@ -117,16 +122,17 @@ public class RoomSetter : MonoBehaviour
                     }
                     break;
                 case Mode.TrackHeadPos:
-                    if (!trackingIsStarted)
-                    {
-                        messenger.SetMessageColor(Color.yellow);
-                        trackingIsStarted = true;
-                    }
-                    else
-                    {
-                        messenger.SetMessageColor(messenger.GetDefaultColor());
-                        trackingIsStarted = false;
-                    }
+                    Instantiate(dotPrefab, head.position, Quaternion.identity);
+                    //if (!trackingIsStarted)
+                    //{
+                    //    messenger.SetMessageColor(Color.yellow);
+                    //    trackingIsStarted = true;
+                    //}
+                    //else
+                    //{
+                    //    messenger.SetMessageColor(messenger.GetDefaultColor());
+                    //    trackingIsStarted = false;
+                    //}
                     break;
             }
         }
@@ -139,10 +145,10 @@ public class RoomSetter : MonoBehaviour
             switch (currentMode)
             {
                 case Mode.SetOffsetX:
-                    roomFloor.Translate(Vector3.right * Time.deltaTime * movementSensitivity, Space.World);
+                    roomFloor.Translate(Vector3.right * Time.deltaTime * movementSensitivity, Space.Self);
                     break;
                 case Mode.SetOffsetZ:
-                    roomFloor.Translate(Vector3.forward * Time.deltaTime * movementSensitivity, Space.World);
+                    roomFloor.Translate(Vector3.forward * Time.deltaTime * movementSensitivity, Space.Self);
                     break;
             }
         }
@@ -159,10 +165,10 @@ public class RoomSetter : MonoBehaviour
             switch (currentMode)
             {
                 case Mode.SetOffsetX:
-                    roomFloor.Translate(Vector3.left * Time.deltaTime * movementSensitivity, Space.World);
+                    roomFloor.Translate(Vector3.left * Time.deltaTime * movementSensitivity, Space.Self);
                     break;
                 case Mode.SetOffsetZ:
-                    roomFloor.Translate(Vector3.back * Time.deltaTime * movementSensitivity, Space.World);
+                    roomFloor.Translate(Vector3.back * Time.deltaTime * movementSensitivity, Space.Self);
                     break;
             }
         }
@@ -170,13 +176,11 @@ public class RoomSetter : MonoBehaviour
         {
             messenger.SetMessageColor(messenger.GetDefaultColor());
         }
-        if (trackingIsStarted)
-        {
-            if ((int)Time.time % 2 == 0)
-            {
-                Instantiate(dotPrefab, head.position, Quaternion.identity);
-            }
-        }
+        //if (trackingIsStarted && Time.time >= nextTimeToTrack)
+        //{
+        //    nextTimeToTrack = Time.time + trackRate;
+        //    Instantiate(dotPrefab, head.position, Quaternion.identity);
+        //}
         //if (OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x != 0f && currentMode == Mode.SetOffsetX)
         //{
         //    roomFloor.Translate(Vector3.forward * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x * Time.deltaTime * movementSensitivity);
