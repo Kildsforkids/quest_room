@@ -1,22 +1,34 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 public class RoomSetter : MonoBehaviour
 {
-    public enum Mode { SetFloor, SetRotation, SetOffsetX, SetOffsetZ, TrackHeadPos }
+    public enum Mode { SetFloor, SetRotation, SetOffsetX, SetOffsetZ, TrackHeadPos, TurnHandsMode }
 
     [SerializeField]
     private OVRInput.Controller m_controller = OVRInput.Controller.None;
     [SerializeField]
     private Messenger messenger;
     [SerializeField]
-    private GameObject dotPrefab;
+    private GameObject pointPrefab;
+    [SerializeField]
+    private float pointLifeTime;
+
+    [SerializeField]
+    private GameObject leftController;
+    [SerializeField]
+    private GameObject rightController;
+    [SerializeField]
+    private GameObject leftHand;
+    [SerializeField]
+    private GameObject rightHand;
 
     [SerializeField]
     private Transform roomFloor;
     [SerializeField]
     private Transform head;
+    [SerializeField]
+    private Transform pointer;
 
     [SerializeField]
     private float movementSensitivity;
@@ -26,15 +38,20 @@ public class RoomSetter : MonoBehaviour
     [SerializeField]
     private float trackRate;
 
+    [SerializeField]
+    private float roomHalfX = -1.795f;
+    [SerializeField]
+    private float roomHalfZ = 2.883f;
+
     private Mode currentMode = Mode.SetFloor;
     private int modesCount;
 
-    private Transform firstDot;
-    private Transform secondDot;
+    private Transform firstPoint;
+    private Transform secondPoint;
 
-    private bool trackingIsStarted = false;
+    //private bool trackingIsStarted = false;
 
-    private float nextTimeToTrack = 0f;
+    //private float nextTimeToTrack = 0f;
 
     //private Coroutine trackingCoroutine;
 
@@ -75,6 +92,9 @@ public class RoomSetter : MonoBehaviour
                 case Mode.TrackHeadPos:
                     messenger.ShowMessage("Отслеживание головы");
                     break;
+                case Mode.TurnHandsMode:
+                    messenger.ShowMessage("Включить руки");
+                    break;
             }
         }
     }
@@ -86,43 +106,58 @@ public class RoomSetter : MonoBehaviour
             switch (currentMode)
             {
                 case Mode.SetFloor:
-                    roomFloor.position = new Vector3(roomFloor.position.x, transform.position.y, roomFloor.position.z);
+                    roomFloor.position = new Vector3(roomFloor.position.x, pointer.position.y, roomFloor.position.z);
                     break;
                 case Mode.SetRotation:
-                    if (firstDot == null)
+                    if (firstPoint == null)
                     {
-                        firstDot = Instantiate(dotPrefab, transform.position, transform.rotation).transform;
+                        firstPoint = Instantiate(pointPrefab, pointer.position, pointer.rotation).transform;
                         messenger.SetMessageColor(Color.yellow);
                     }
                     else
                     {
-                        secondDot = Instantiate(dotPrefab, transform.position, Quaternion.identity).transform;
+                        secondPoint = Instantiate(pointPrefab, pointer.position, Quaternion.identity).transform;
 
-                        var A = new Vector2(firstDot.position.x, firstDot.position.z);
-                        var B = new Vector2(secondDot.position.x, secondDot.position.z);
+                        var heading = secondPoint.position - firstPoint.position;
+                        var distance = heading.magnitude;
+                        var direction = heading / distance;
 
-                        //var C = new Vector2(firstDot.position.x, secondDot.position.z);
-                        var C = new Vector2(secondDot.position.x, firstDot.position.z);
+                        //Debug.Log($"{direction} - {new Vector3(0f, 0f, direction.z)}");
 
-                        var a = C - A;
-                        var b = B - A;
+                        roomFloor.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
+                        //roomFloor.rotation = Quaternion.LookRotation(direction);
 
-                        var multi = a.x * b.x + a.y * b.y;
+                        //var A = new Vector2(firstPoint.position.x, firstPoint.position.z);
+                        //var B = new Vector2(secondPoint.position.x, secondPoint.position.z);
 
-                        var cos = multi / (a.magnitude * b.magnitude);
+                        ////var C = new Vector2(firstPoint.position.x, secondPoint.position.z);
+                        //var C = new Vector2(secondPoint.position.x, firstPoint.position.z);
 
-                        var acos = Mathf.Acos(cos);
-                        var ang = (180.0f / Mathf.PI) * acos;
+                        //var a = C - A;
+                        //var b = B - A;
 
-                        //RotateRoom(ang + 90.0f);
-                        RotateRoom(ang);
+                        //var multi = a.x * b.x + a.y * b.y;
+
+                        //var cos = multi / (a.magnitude * b.magnitude);
+
+                        //var acos = Mathf.Acos(cos);
+                        //var ang = (180.0f / Mathf.PI) * acos;
+
+                        ////RotateRoom(ang + 90.0f);
+                        //RotateRoom(ang);
                         messenger.SetMessageColor(messenger.GetDefaultColor());
-                        Destroy(firstDot.gameObject, 3f);
-                        Destroy(secondDot.gameObject, 3f);
+                        Destroy(firstPoint.gameObject, pointLifeTime);
+                        Destroy(secondPoint.gameObject, pointLifeTime);
                     }
                     break;
+                case Mode.SetOffsetX:
+                    roomFloor.localPosition = new Vector3(roomFloor.position.x, roomFloor.position.y, pointer.position.z + roomHalfX);
+                    break;
+                case Mode.SetOffsetZ:
+                    roomFloor.localPosition = new Vector3(pointer.position.x - roomHalfZ, roomFloor.position.y, roomFloor.position.z);
+                    break;
                 case Mode.TrackHeadPos:
-                    Instantiate(dotPrefab, head.position, Quaternion.identity);
+                    Instantiate(pointPrefab, head.position, Quaternion.identity);
                     //if (!trackingIsStarted)
                     //{
                     //    messenger.SetMessageColor(Color.yellow);
@@ -133,6 +168,12 @@ public class RoomSetter : MonoBehaviour
                     //    messenger.SetMessageColor(messenger.GetDefaultColor());
                     //    trackingIsStarted = false;
                     //}
+                    break;
+                case Mode.TurnHandsMode:
+                    leftHand.SetActive(true);
+                    rightHand.SetActive(true);
+                    leftController.SetActive(false);
+                    rightController.SetActive(false);
                     break;
             }
         }
@@ -179,7 +220,7 @@ public class RoomSetter : MonoBehaviour
         //if (trackingIsStarted && Time.time >= nextTimeToTrack)
         //{
         //    nextTimeToTrack = Time.time + trackRate;
-        //    Instantiate(dotPrefab, head.position, Quaternion.identity);
+        //    Instantiate(pointPrefab, head.position, Quaternion.identity);
         //}
         //if (OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x != 0f && currentMode == Mode.SetOffsetX)
         //{
@@ -201,34 +242,34 @@ public class RoomSetter : MonoBehaviour
 
     //private IEnumerator SetHeadPosition()
     //{
-    //    Instantiate(dotPrefab, head.position, Quaternion.identity);
+    //    Instantiate(pointPrefab, head.position, Quaternion.identity);
     //    yield return new WaitForSeconds(2f);
     //}
 
-    private void SetRoomRotationWithController()
-    {
-        firstDot = Instantiate(dotPrefab, transform.position, transform.rotation).transform;
-        RotateRoom(firstDot.rotation.eulerAngles.y);
-        Destroy(firstDot.gameObject, 3f);
-    }
+    //private void SetRoomRotationWithController()
+    //{
+    //    firstPoint = Instantiate(pointPrefab, transform.position, transform.rotation).transform;
+    //    RotateRoom(firstPoint.rotation.eulerAngles.y);
+    //    Destroy(firstPoint.gameObject, pointLifeTime);
+    //}
 
-    private void SetRoomRotation()
-    {
-        if (firstDot == null)
-        {
-            firstDot = Instantiate(dotPrefab, transform.position, Quaternion.identity).transform;
-        }
-        else
-        {
-            secondDot = Instantiate(dotPrefab, transform.position, Quaternion.identity).transform;
-            var heading = secondDot.position - firstDot.position;
-            var distance = heading.magnitude;
-            var direction = heading / distance;
-            RotateRoom(direction.y * 360.0f);
-            Destroy(firstDot.gameObject, 3f);
-            Destroy(secondDot.gameObject, 3f);
-        }
-    }
+    //private void SetRoomRotation()
+    //{
+    //    if (firstPoint == null)
+    //    {
+    //        firstPoint = Instantiate(pointPrefab, transform.position, Quaternion.identity).transform;
+    //    }
+    //    else
+    //    {
+    //        secondPoint = Instantiate(pointPrefab, transform.position, Quaternion.identity).transform;
+    //        var heading = secondPoint.position - firstPoint.position;
+    //        var distance = heading.magnitude;
+    //        var direction = heading / distance;
+    //        RotateRoom(direction.y * 360.0f);
+    //        Destroy(firstPoint.gameObject, 3f);
+    //        Destroy(secondPoint.gameObject, 3f);
+    //    }
+    //}
 
     private void RotateRoom(float value)
     {
