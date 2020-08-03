@@ -150,12 +150,17 @@ public class RoomSetter : MonoBehaviour
                         Destroy(secondPoint.gameObject, pointLifeTime);
                     }
                     break;
-                case Mode.SetOffsetX:
-                    roomFloor.localPosition = new Vector3(roomFloor.position.x, roomFloor.position.y, pointer.position.z + roomHalfX);
-                    break;
-                case Mode.SetOffsetZ:
-                    roomFloor.localPosition = new Vector3(pointer.position.x - roomHalfZ, roomFloor.position.y, roomFloor.position.z);
-                    break;
+                //case Mode.SetOffsetX:
+                //    RaycastHit hit;
+                //    if (Physics.Raycast(pointer.position, pointer.TransformDirection(Vector3.forward), out hit, 5f))
+                //    {
+                //        Debug.DrawRay(pointer.position, pointer.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                //    }
+                //    roomFloor.localPosition = new Vector3(roomFloor.position.x, roomFloor.position.y, pointer.position.z + roomHalfX);
+                //    break;
+                //case Mode.SetOffsetZ:
+                //    roomFloor.localPosition = new Vector3(pointer.position.x - roomHalfZ, roomFloor.position.y, roomFloor.position.z);
+                //    break;
                 case Mode.TrackHeadPos:
                     Instantiate(pointPrefab, head.position, Quaternion.identity);
                     //if (!trackingIsStarted)
@@ -174,6 +179,20 @@ public class RoomSetter : MonoBehaviour
                     rightHand.SetActive(true);
                     leftController.SetActive(false);
                     rightController.SetActive(false);
+                    break;
+            }
+        }
+        if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, m_controller))
+        {
+            switch (currentMode)
+            {
+                case Mode.SetOffsetX:
+                    int layerMask = 1 << 10;
+                    RaycastHit hit;
+                    if (Physics.Raycast(pointer.position, pointer.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
+                    {
+                        Debug.DrawRay(pointer.position, pointer.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+                    }
                     break;
             }
         }
