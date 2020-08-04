@@ -53,8 +53,6 @@ public class RoomSetter : MonoBehaviour
 
     //private float nextTimeToTrack = 0f;
 
-    //private Coroutine trackingCoroutine;
-
     private void Start()
     {
         modesCount = Enum.GetValues(typeof(Mode)).Length;
@@ -122,29 +120,8 @@ public class RoomSetter : MonoBehaviour
                         var distance = heading.magnitude;
                         var direction = heading / distance;
 
-                        //Debug.Log($"{direction} - {new Vector3(0f, 0f, direction.z)}");
-
                         roomFloor.rotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
-                        //roomFloor.rotation = Quaternion.LookRotation(direction);
 
-                        //var A = new Vector2(firstPoint.position.x, firstPoint.position.z);
-                        //var B = new Vector2(secondPoint.position.x, secondPoint.position.z);
-
-                        ////var C = new Vector2(firstPoint.position.x, secondPoint.position.z);
-                        //var C = new Vector2(secondPoint.position.x, firstPoint.position.z);
-
-                        //var a = C - A;
-                        //var b = B - A;
-
-                        //var multi = a.x * b.x + a.y * b.y;
-
-                        //var cos = multi / (a.magnitude * b.magnitude);
-
-                        //var acos = Mathf.Acos(cos);
-                        //var ang = (180.0f / Mathf.PI) * acos;
-
-                        ////RotateRoom(ang + 90.0f);
-                        //RotateRoom(ang);
                         messenger.SetMessageColor(messenger.GetDefaultColor());
                         Destroy(firstPoint.gameObject, pointLifeTime);
                         Destroy(secondPoint.gameObject, pointLifeTime);
@@ -182,20 +159,20 @@ public class RoomSetter : MonoBehaviour
                     break;
             }
         }
-        if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, m_controller))
-        {
-            switch (currentMode)
-            {
-                case Mode.SetOffsetX:
-                    int layerMask = 1 << 10;
-                    RaycastHit hit;
-                    if (Physics.Raycast(pointer.position, pointer.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
-                    {
-                        Debug.DrawRay(pointer.position, pointer.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-                    }
-                    break;
-            }
-        }
+        //if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, m_controller))
+        //{
+        //    switch (currentMode)
+        //    {
+        //        case Mode.SetOffsetX:
+        //            int layerMask = 1 << 10;
+        //            RaycastHit hit;
+        //            if (Physics.Raycast(pointer.position, pointer.TransformDirection(Vector3.forward), out hit, 5f, layerMask))
+        //            {
+        //                Debug.DrawRay(pointer.position, pointer.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+        //            }
+        //            break;
+        //    }
+        //}
         if (OVRInput.GetDown(OVRInput.Button.One, m_controller))
         {
             messenger.SetMessageColor(Color.yellow);
@@ -245,53 +222,5 @@ public class RoomSetter : MonoBehaviour
         //{
         //    roomFloor.Translate(Vector3.forward * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).x * Time.deltaTime * movementSensitivity);
         //}
-        //if (OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y != 0f)
-        //{
-        //    switch (currentMode)
-        //    {
-        //        case Mode.SetOffset:
-        //            roomFloor.Translate(Vector3.right * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y * Time.deltaTime * movementSensitivity);
-        //            break;
-        //        case Mode.SetRotation:
-        //            roomFloor.Rotate(Vector3.up * OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, m_controller).y * Time.deltaTime * rotationSensitivity);
-        //            break;
-        //    }
-        //}
-    }
-
-    //private IEnumerator SetHeadPosition()
-    //{
-    //    Instantiate(pointPrefab, head.position, Quaternion.identity);
-    //    yield return new WaitForSeconds(2f);
-    //}
-
-    //private void SetRoomRotationWithController()
-    //{
-    //    firstPoint = Instantiate(pointPrefab, transform.position, transform.rotation).transform;
-    //    RotateRoom(firstPoint.rotation.eulerAngles.y);
-    //    Destroy(firstPoint.gameObject, pointLifeTime);
-    //}
-
-    //private void SetRoomRotation()
-    //{
-    //    if (firstPoint == null)
-    //    {
-    //        firstPoint = Instantiate(pointPrefab, transform.position, Quaternion.identity).transform;
-    //    }
-    //    else
-    //    {
-    //        secondPoint = Instantiate(pointPrefab, transform.position, Quaternion.identity).transform;
-    //        var heading = secondPoint.position - firstPoint.position;
-    //        var distance = heading.magnitude;
-    //        var direction = heading / distance;
-    //        RotateRoom(direction.y * 360.0f);
-    //        Destroy(firstPoint.gameObject, 3f);
-    //        Destroy(secondPoint.gameObject, 3f);
-    //    }
-    //}
-
-    private void RotateRoom(float value)
-    {
-        roomFloor.rotation = Quaternion.Euler(roomFloor.rotation.eulerAngles.x, value, roomFloor.rotation.eulerAngles.z);
     }
 }

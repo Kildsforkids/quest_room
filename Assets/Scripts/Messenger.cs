@@ -5,13 +5,13 @@ public class Messenger : MonoBehaviour
 {
     [SerializeField]
     private Text message;
-    [SerializeField]
+
     private Color defaultColor;
 
-    //private void Start()
-    //{
-    //    message.text = "";
-    //}
+    private void Start()
+    {
+        defaultColor = message.color;
+    }
 
     public void ShowMessage(string text)
     {

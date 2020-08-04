@@ -3375,7 +3375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1189475056}
-  defaultColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
 --- !u!114 &465607424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7746,7 +7745,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1246674952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.731, y: 2.316, z: 0}
+  m_LocalPosition: {x: -0.731, y: 1.886, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 327776753}
@@ -7764,7 +7763,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.46
   m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -11457,7 +11456,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 1990358839}
-  defaultColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
 --- !u!1 &1965800423
 GameObject:
   m_ObjectHideFlags: 0
@@ -12865,7 +12863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
   m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -15838,6 +15836,7 @@ GameObject:
   - component: {fileID: 4766091914386571}
   - component: {fileID: 114417842495318211}
   - component: {fileID: 114460394098991279}
+  - component: {fileID: 1581749704624002}
   m_Layer: 0
   m_Name: OVRCustomHandPrefab_R
   m_TagString: Untagged
@@ -15845,6 +15844,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &1581749704624002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581749704624001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04de6e732da390249b9f8788222d93e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handSkeleton: {fileID: 114460394098991279}
+  messenger: {fileID: 1952963283}
 --- !u!1 &1583236324033947
 GameObject:
   m_ObjectHideFlags: 0
@@ -16466,6 +16479,7 @@ GameObject:
   - component: {fileID: 4927694026662954}
   - component: {fileID: 114320644246779596}
   - component: {fileID: 114674611369775916}
+  - component: {fileID: 1732268995510793}
   m_Layer: 0
   m_Name: OVRCustomHandPrefab_L
   m_TagString: Untagged
@@ -16473,6 +16487,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!114 &1732268995510793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732268995510792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04de6e732da390249b9f8788222d93e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handSkeleton: {fileID: 114674611369775916}
+  messenger: {fileID: 1952963283}
 --- !u!1 &1738045033227728
 GameObject:
   m_ObjectHideFlags: 0
@@ -26630,7 +26658,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   usePerEyeCameras: 0
-  useFixedUpdateForTracking: 0
+  useFixedUpdateForTracking: 1
   disableEyeAnchorCameras: 0
 --- !u!114 &6796389048320274029
 MonoBehaviour:
@@ -26754,6 +26782,7 @@ GameObject:
   - component: {fileID: 6796389048320274023}
   - component: {fileID: 6796389048320274029}
   - component: {fileID: 6901536633681426729}
+  - component: {fileID: 6796389048325790602}
   m_Layer: 0
   m_Name: OVRCameraRig
   m_TagString: Untagged
@@ -26761,6 +26790,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &6796389048325790602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6796389048325790601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f582f640d31a36c4b988915be8b21263, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6796389048325790603
 GameObject:
   m_ObjectHideFlags: 0
