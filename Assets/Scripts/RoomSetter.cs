@@ -156,6 +156,7 @@ public class RoomSetter : MonoBehaviour
                     rightHand.SetActive(true);
                     leftController.SetActive(false);
                     rightController.SetActive(false);
+                    messenger.gameObject.SetActive(false);
                     break;
             }
         }
