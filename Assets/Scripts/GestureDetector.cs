@@ -15,6 +15,8 @@ public class GestureDetector : MonoBehaviour
     [SerializeField]
     private float threshold = 0.1f;
     [SerializeField]
+    private float recognitionRate = 2f;
+    [SerializeField]
     private OVRSkeleton skeleton;
     [SerializeField]
     private bool debugMode = true;
@@ -23,6 +25,7 @@ public class GestureDetector : MonoBehaviour
     private Gesture previousGesture;
 
     private bool isBonesSet = false;
+    private float nextTimeToRecognize = 0f;
 
     private void Start()
     {
@@ -31,27 +34,31 @@ public class GestureDetector : MonoBehaviour
 
     private void Update()
     {
-        if (!isBonesSet && skeleton.Bones.Count > 0)
+        if (skeleton.gameObject.activeSelf)
         {
-            fingerBones = new List<OVRBone>(skeleton.Bones);
-            isBonesSet = true;
-        }
-
-        if (isBonesSet)
-        {
-            if (debugMode && Input.GetKeyDown(KeyCode.Space))
+            if (!isBonesSet && skeleton.Bones.Count > 0)
             {
-                Save();
+                fingerBones = new List<OVRBone>(skeleton.Bones);
+                isBonesSet = true;
             }
 
-            Gesture currentGesture = Recognize();
-            bool hasRecognized = !currentGesture.Equals(new Gesture());
-
-            if (hasRecognized && !currentGesture.Equals(previousGesture))
+            if (isBonesSet)
             {
-                Debug.Log($"New Gesture Found : {currentGesture.name}");
-                previousGesture = currentGesture;
-                currentGesture.onRecognized.Invoke();
+                if (debugMode && Input.GetKeyDown(KeyCode.Space))
+                {
+                    Save();
+                }
+
+                Gesture currentGesture = Recognize();
+                bool hasRecognized = !currentGesture.Equals(new Gesture());
+
+                if (hasRecognized && Time.time >= nextTimeToRecognize)// && !currentGesture.Equals(previousGesture))
+                {
+                    nextTimeToRecognize = Time.time + recognitionRate;
+                    Debug.Log($"New Gesture Found : {currentGesture.name}");
+                    previousGesture = currentGesture;
+                    currentGesture.onRecognized.Invoke();
+                }
             }
         }
     }
