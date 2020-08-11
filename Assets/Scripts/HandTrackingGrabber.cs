@@ -3,6 +3,8 @@
 public class HandTrackingGrabber : OVRGrabber
 {
     [SerializeField]
+    private GameObject light;
+    [SerializeField]
     private Transform controller;
     [SerializeField]
     private GameObject fireBall;
@@ -39,20 +41,12 @@ public class HandTrackingGrabber : OVRGrabber
     {
         base.Update();
         CheckIndexPinch();
-
-        //if (hand.IsTracked)
-        //{
-        //    controller.gameObject.SetActive(false);
-        //}
-        //else
-        //{
-        //    controller.gameObject.SetActive(true);
-        //}
-        //CheckHandPinch();
     }
 
     private RaycastHit DetectHit(Vector3 startPos, float distance, Vector3 direction)
     {
+        int layerMask = 1 << 8;
+        layerMask = ~layerMask;
         //init ray to save the start and direction values
         Ray ray = new Ray(startPos, direction);
         //varible to hold the detection info
@@ -60,7 +54,7 @@ public class HandTrackingGrabber : OVRGrabber
         //the end Pos which defaults to the startPos + distance 
         Vector3 endPos = startPos + (distance * direction);
 
-        if (Physics.Raycast(ray, out hit, distance))
+        if (Physics.Raycast(ray, out hit, distance, layerMask))
         {
             //if we detect something
             endPos = hit.point;
@@ -69,8 +63,11 @@ public class HandTrackingGrabber : OVRGrabber
             {
                 lineRenderer.enabled = true;
 
-                lineRenderer.SetPosition(0, transform.position);
+                lineRenderer.SetPosition(0, handCenter.position - (handCenter.position - endPos).normalized * 0.1f);
                 lineRenderer.SetPosition(1, endPos);
+
+                light.transform.position = handCenter.position - (handCenter.position - endPos).normalized * 0.1f;
+                light.SetActive(true);
             }
             
             var target = hit.transform;
@@ -81,33 +78,18 @@ public class HandTrackingGrabber : OVRGrabber
                 {
                     movingObject = target;
                     movingObject.GetComponent<Rigidbody>().isKinematic = true;
+
+                    light.SetActive(false);
+
                     lineRenderer.enabled = false;
                 }
-                    
-                //movingObject.position = Vector3.MoveTowards(target.position, transform.position, 1f * Time.deltaTime);
-
-                //if (Vector3.Distance(movingObject.position, transform.position) < 0.1f)
-                //{
-
-                //}
             }
-            //else
-            //{
-            //    if (movingObject != null)
-            //    {
-            //        movingObject.GetComponent<Rigidbody>().isKinematic = false;
-            //        movingObject = null;
-            //    }
-            //}
-
-            //if (movingObject && hit.transform.tag == "Interactable")
-            //{
-            //    movingObject = hit.transform;
-            //}
         }
         else
         {
             lineRenderer.enabled = false;
+
+            light.SetActive(false);
         }
 
         if (movingObject != null)
@@ -118,19 +100,6 @@ public class HandTrackingGrabber : OVRGrabber
         //Debug.DrawLine(startPos, endPos, Color.green, 2);
         return hit;
     }
-
-    //private void CheckHandPinch()
-    //{
-    //    float pinchStrengthIndex = hand.GetFingerPinchStrength(OVRHand.HandFinger.Index);
-    //    float pinchStrengthMiddle = hand.GetFingerPinchStrength(OVRHand.HandFinger.Middle);
-    //    //float pinchStrengthThumb = hand.GetFingerPinchStrength(OVRHand.HandFinger.Thumb);
-    //    bool isPinching = pinchStrengthIndex > 0.2f && pinchStrengthMiddle > 0.2f;// && pinchStrengthThumb > 0.2f;
-
-    //    if (!m_grabbedObj && isPinching && m_grabCandidates.Count > 0)
-    //        GrabBegin();
-    //    else if (m_grabbedObj && !isPinching)
-    //        GrabEnd();
-    //}
 
     private void CheckIndexPinch()
     {
@@ -155,16 +124,18 @@ public class HandTrackingGrabber : OVRGrabber
         {
             if (isInversed)
             {
-                DetectHit(transform.position, 5f, -transform.up);
+                DetectHit(handCenter.position, 5f, -handCenter.up);
             }
             else
             {
-                DetectHit(transform.position, 5f, transform.up);
+                DetectHit(handCenter.position, 5f, handCenter.up);
             }
         }
         else if (!isPinching)
         {
             lineRenderer.enabled = false;
+
+            light.SetActive(false);
             if (movingObject != null)
             {
                 movingObject.GetComponent<Rigidbody>().isKinematic = false;
@@ -175,7 +146,10 @@ public class HandTrackingGrabber : OVRGrabber
         if (!m_grabbedObj && isPinching && m_grabCandidates.Count > 0)
         {
             GrabBegin();
+
             lineRenderer.enabled = false;
+
+            light.SetActive(false);
         }
         else if (m_grabbedObj && !isPinching)
         {
