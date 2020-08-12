@@ -6,5 +6,6 @@ public class InitVR : MonoBehaviour
     {
         OVRManager.fixedFoveatedRenderingLevel = OVRManager.FixedFoveatedRenderingLevel.High;
         OVRManager.useDynamicFixedFoveatedRendering = true;
+        Application.targetFrameRate = 72;
     }
 }

@@ -43,21 +43,17 @@ public class HandTrackingGrabber : OVRGrabber
         CheckIndexPinch();
     }
 
+    // Бросает луч и запускает взаимодействие при попадании
     private RaycastHit DetectHit(Vector3 startPos, float distance, Vector3 direction)
     {
         int layerMask = 1 << 8;
         layerMask = ~layerMask;
-        //init ray to save the start and direction values
         Ray ray = new Ray(startPos, direction);
-        //varible to hold the detection info
         RaycastHit hit;
-        //the end Pos which defaults to the startPos + distance 
-        Vector3 endPos = startPos + (distance * direction);
 
         if (Physics.Raycast(ray, out hit, distance, layerMask))
         {
-            //if we detect something
-            endPos = hit.point;
+            var endPos = hit.point;
 
             if (movingObject == null)
             {
@@ -96,11 +92,11 @@ public class HandTrackingGrabber : OVRGrabber
         {
             movingObject.position = Vector3.MoveTowards(movingObject.position, handCenter.position, pullingSpeed * Time.deltaTime);
         }
-        // 2 is the duration the line is drawn, afterwards its deleted
         //Debug.DrawLine(startPos, endPos, Color.green, 2);
         return hit;
     }
 
+    // Проверка на пинч (щипок)
     private void CheckIndexPinch()
     {
         float pinchStrength = hand.GetFingerPinchStrength(OVRHand.HandFinger.Index);
@@ -157,6 +153,7 @@ public class HandTrackingGrabber : OVRGrabber
         }
     }
 
+    // Переписываем GrabEnd, чтобы применять ускроение и поворот от руки при отпускании предмета
     protected override void GrabEnd()
     {
         if (m_grabbedObj)

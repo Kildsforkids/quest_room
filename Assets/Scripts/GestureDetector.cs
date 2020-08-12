@@ -63,6 +63,7 @@ public class GestureDetector : MonoBehaviour
         }
     }
 
+    // Сохранить текущий жест на руке
     private void Save()
     {
         Gesture g = new Gesture();
@@ -78,6 +79,7 @@ public class GestureDetector : MonoBehaviour
         gestures.Add(g);
     }
 
+    // Распознать текущий жест
     private Gesture Recognize()
     {
         Gesture currentGesture = new Gesture();

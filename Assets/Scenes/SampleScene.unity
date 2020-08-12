@@ -7095,6 +7095,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Interactable
       objectReference: {fileID: 0}
+    - target: {fileID: 1128645710536152032, guid: c7f869d704f872742baf22d9e4b77b37,
+        type: 3}
+      propertyPath: m_Mass
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 1128645710536152033, guid: c7f869d704f872742baf22d9e4b77b37,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7870,6 +7875,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 354402422193042614}
     m_Modifications:
+    - target: {fileID: 2253159990239303153, guid: 10fa1c8b0a5ed724797a6e07730522a2,
+        type: 3}
+      propertyPath: m_Mass
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 2253159990239303155, guid: 10fa1c8b0a5ed724797a6e07730522a2,
         type: 3}
       propertyPath: m_Name
@@ -8671,14 +8681,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3840307722409579613}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54c16b381e28e8d479237771d234dbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _confidenceBehavior: 1
   _systemGestureBehavior: 1
-  _renderPhysicsCapsules: 0
+  _renderPhysicsCapsules: 1
   _skeletonMaterial: {fileID: 0}
   _capsuleMaterial: {fileID: 0}
   _systemGestureMaterial: {fileID: 0}
@@ -8804,7 +8814,7 @@ MonoBehaviour:
   m_gripTransform: {fileID: 3837898591677205851}
   m_grabVolumes: []
   m_controller: 0
-  m_parentTransform: {fileID: 0}
+  m_parentTransform: {fileID: 3837898591677205851}
   m_player: {fileID: 0}
   light: {fileID: 1911002482}
   controller: {fileID: 7892041210375422484}
@@ -9122,7 +9132,7 @@ MonoBehaviour:
   m_gripTransform: {fileID: 4201411013438040621}
   m_grabVolumes: []
   m_controller: 0
-  m_parentTransform: {fileID: 0}
+  m_parentTransform: {fileID: 4201411013438040621}
   m_player: {fileID: 0}
   light: {fileID: 597104797}
   controller: {fileID: 5013434400013404931}
@@ -9467,14 +9477,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4199359155937391403}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54c16b381e28e8d479237771d234dbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _confidenceBehavior: 1
   _systemGestureBehavior: 1
-  _renderPhysicsCapsules: 0
+  _renderPhysicsCapsules: 1
   _skeletonMaterial: {fileID: 0}
   _capsuleMaterial: {fileID: 0}
   _systemGestureMaterial: {fileID: 0}
@@ -11917,7 +11927,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   usePerEyeCameras: 0
-  useFixedUpdateForTracking: 1
+  useFixedUpdateForTracking: 0
   disableEyeAnchorCameras: 0
 --- !u!114 &6796389048320274029
 MonoBehaviour:
@@ -12395,7 +12405,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6796389048325790601}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5178bc8574ce2bf4388e787a2e2af326, type: 3}
   m_Name: 
