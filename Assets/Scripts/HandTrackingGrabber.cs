@@ -115,8 +115,7 @@ public class HandTrackingGrabber : OVRGrabber
         //    currentFireBall.GetComponent<Rigidbody>().AddForce(currentFireBall.transform.forward * 100f);
         //    currentFireBall = null;
         //}
-
-        if (!m_grabbedObj && isPinching)
+        if (!m_grabbedObj && hand.GetFingerIsPinching(OVRHand.HandFinger.Index))
         {
             if (isInversed)
             {
@@ -127,7 +126,7 @@ public class HandTrackingGrabber : OVRGrabber
                 DetectHit(handCenter.position, 5f, handCenter.up);
             }
         }
-        else if (!isPinching)
+        else if (!hand.GetFingerIsPinching(OVRHand.HandFinger.Index))
         {
             lineRenderer.enabled = false;
 
