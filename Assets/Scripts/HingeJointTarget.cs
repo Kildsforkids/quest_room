@@ -2,64 +2,38 @@
 
 public class HingeJointTarget : MonoBehaviour
 {
+    public enum CoordAxis { X, Y, Z }
 
-    public HingeJoint hj;
-    public Transform target;
-    [Tooltip("Only use one of these values at a time. Toggle invert if the rotation is backwards.")]
-    public bool x, y, z, invert;
+    [SerializeField]
+    private HingeJoint hj;
+    [SerializeField]
+    private Transform target;
 
-    void Start()
-    {
+    [SerializeField]
+    private CoordAxis axis = CoordAxis.X;
+    [SerializeField]
+    private bool invert;
 
-    }
-
-    void Update()
+    private void Update()
     {
         if (hj != null)
         {
-            if (x)
-            {
-                JointSpring js;
-                js = hj.spring;
-
-                js.targetPosition = target.transform.localEulerAngles.x;
-                if (js.targetPosition > 180)
-                    js.targetPosition = js.targetPosition - 360;
-                if (invert)
-                    js.targetPosition = js.targetPosition * -1;
-
-                js.targetPosition = Mathf.Clamp(js.targetPosition, hj.limits.min + 5, hj.limits.max - 5);
-
-                hj.spring = js;
-            }
-            else if (y)
-            {
-                JointSpring js;
-                js = hj.spring;
-                js.targetPosition = target.transform.localEulerAngles.y;
-                if (js.targetPosition > 180)
-                    js.targetPosition = js.targetPosition - 360;
-                if (invert)
-                    js.targetPosition = js.targetPosition * -1;
-
-                js.targetPosition = Mathf.Clamp(js.targetPosition, hj.limits.min + 5, hj.limits.max - 5);
-
-                hj.spring = js;
-            }
-            else if (z)
-            {
-                JointSpring js;
-                js = hj.spring;
-                js.targetPosition = target.transform.localEulerAngles.z;
-                if (js.targetPosition > 180)
-                    js.targetPosition = js.targetPosition - 360;
-                if (invert)
-                    js.targetPosition = js.targetPosition * -1;
-
-                js.targetPosition = Mathf.Clamp(js.targetPosition, hj.limits.min + 5, hj.limits.max - 5);
-
-                hj.spring = js;
-            }
+            DoSomeStuff();
         }
+    }
+
+    private void DoSomeStuff()
+    {
+        var js = hj.spring;
+
+        js.targetPosition = axis == CoordAxis.X ? target.localEulerAngles.x : axis == CoordAxis.Y ? target.localEulerAngles.y : target.localEulerAngles.z;
+        if (js.targetPosition > 180)
+            js.targetPosition = js.targetPosition - 360;
+        if (invert)
+            js.targetPosition = js.targetPosition * -1;
+
+        js.targetPosition = Mathf.Clamp(js.targetPosition, hj.limits.min + 5, hj.limits.max - 5);
+
+        hj.spring = js;
     }
 }
