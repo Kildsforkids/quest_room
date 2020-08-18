@@ -27,10 +27,10 @@ public class HingeJointTarget : MonoBehaviour
         var js = hj.spring;
 
         js.targetPosition = axis == CoordAxis.X ? target.localEulerAngles.x : axis == CoordAxis.Y ? target.localEulerAngles.y : target.localEulerAngles.z;
-        if (js.targetPosition > 180)
-            js.targetPosition = js.targetPosition - 360;
+        if (js.targetPosition > 180.0f)
+            js.targetPosition -= 360f;
         if (invert)
-            js.targetPosition = js.targetPosition * -1;
+            js.targetPosition = -js.targetPosition;
 
         js.targetPosition = Mathf.Clamp(js.targetPosition, hj.limits.min + 5, hj.limits.max - 5);
 
